@@ -26,34 +26,54 @@
 }
 
 .kpi-card {
-    background: linear-gradient(180deg, #161b22, #0f131a);
-    border: 1px solid #303743;
-    border-radius: 16px;
+    background: linear-gradient(180deg, #171d26 0%, #111827 100%);
+    border: 1px solid #2b313b;
+    border-radius: 18px;
     padding: 22px;
-    text-align: center;
-    min-height: 150px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 210px;
+
+    transition: all .25s ease;
 }
 
-.kpi-icon {
-    font-size: 34px;
-    margin-bottom: 8px;
+.kpi-card:hover{
+    transform: translateY(-4px);
+    border-color:#ef233c;
+    box-shadow:0 8px 25px rgba(0,0,0,.35);
 }
 
-.kpi-label {
-    color: #c8ced8;
-    font-size: 15px;
+.kpi-icon{
+    font-size:48px;
+    margin-bottom:16px;
 }
 
-.kpi-value {
-    color: #ffffff;
-    font-size: 34px;
-    font-weight: 800;
+.kpi-label{
+    color:#c5ccd8;
+    font-size:14px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:1px;
 }
 
-.kpi-note {
-    color: #ff3b3b;
-    font-size: 14px;
-    margin-top: 6px;
+.kpi-value{
+    color:white;
+    font-size:54px;
+    font-weight:800;
+    line-height:1.05;
+
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+.kpi-note{
+    color:#ef233c;
+    font-size:18px;
+    font-weight:600;
 }
 
 /* Hide default Streamlit top padding */
@@ -102,4 +122,37 @@ section[data-testid="stSidebar"] p {
     background-color: rgba(215, 38, 61, 0.18);
     border: 1px solid #d7263d;
     color: white;
+}
+
+.chart-card {
+    background: #111827;
+    border: 1px solid #2b313b;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 18px;
+}
+
+.chart-card-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 2px;
+}
+
+.chart-card-subtitle {
+    font-size: 14px;
+    color: #b8beca;
+    margin-bottom: 10px;
+}
+
+.chart-card-footer {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(215, 38, 61, 0.18);
+    border: 1px solid rgba(215, 38, 61, 0.55);
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
 }
