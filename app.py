@@ -321,6 +321,16 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 ])
 
 with tab1:
+    st.markdown("""
+<div class="section-spacing">
+    <div class="section-title">
+        Operational Overview
+    </div>
+    <div class="section-subtitle">
+        Response activity across districts and apparatus
+    </div>
+</div>
+""", unsafe_allow_html=True)
 # ---------- Top Overview Charts ----------
     chart_col1, chart_col2, chart_col3 = st.columns(3)
 
@@ -446,105 +456,114 @@ with chart_col3:
     st.plotly_chart(fig, use_container_width=True)
 
     # ---------- Incidents Over Time ----------
-    st.subheader("Incidents Over Time")
+st.markdown("""
+<div class="section-spacing">
+<div class="section-title">
+    Incident Timeline
+</div>
+<div class="section-subtitle">
+    Daily, weekly and monthly incident trends
+</div>
+</div>
+""", unsafe_allow_html=True)
 
-    if not filtered_df.empty and filtered_df["Date"].notna().any():
-        time_scale = st.radio(
-            "Time Scale",
-            ["Daily", "Weekly", "Monthly"],
-            horizontal=True
+if not filtered_df.empty and filtered_df["Date"].notna().any():
+    time_scale = st.radio(
+        "Time Scale",
+        ["Daily", "Weekly", "Monthly"],
+        horizontal=True
+    )
+
+    date_data = filtered_df.dropna(subset=["Date"]).copy()
+    date_data["Date"] = pd.to_datetime(date_data["Date"])
+
+    year = int(date_data["Date"].dt.year.mode()[0])
+
+    full_daily_dates = pd.date_range(
+        start=f"{year}-01-01",
+        end=f"{year}-12-31",
+        freq="D"
+    )
+
+    daily_counts = (
+        date_data
+        .groupby("Date")
+        .size()
+        .rename("Incidents")
+        .reindex(full_daily_dates, fill_value=0)
+        .rename_axis("Date")
+        .reset_index()
+    )
+
+    if time_scale == "Daily":
+        chart_data = daily_counts.copy()
+        chart_data["7-Day Average"] = chart_data["Incidents"].rolling(
+            window=7,
+            min_periods=1
+        ).mean()
+
+        fig = px.line(
+            chart_data,
+            x="Date",
+            y=["Incidents", "7-Day Average"],
+            title="Daily Incidents With 7-Day Average",
+            labels={
+                "value": "Incident Count",
+                "variable": "Metric"
+            }
         )
 
-        date_data = filtered_df.dropna(subset=["Date"]).copy()
-        date_data["Date"] = pd.to_datetime(date_data["Date"])
-
-        year = int(date_data["Date"].dt.year.mode()[0])
-
-        full_daily_dates = pd.date_range(
-            start=f"{year}-01-01",
-            end=f"{year}-12-31",
-            freq="D"
-        )
-
-        daily_counts = (
-            date_data
-            .groupby("Date")
-            .size()
-            .rename("Incidents")
-            .reindex(full_daily_dates, fill_value=0)
-            .rename_axis("Date")
+    elif time_scale == "Weekly":
+        chart_data = (
+            daily_counts
+            .set_index("Date")
+            .resample("W")
+            .sum()
             .reset_index()
         )
 
-        if time_scale == "Daily":
-            chart_data = daily_counts.copy()
-            chart_data["7-Day Average"] = chart_data["Incidents"].rolling(
-                window=7,
-                min_periods=1
-            ).mean()
-
-            fig = px.line(
-                chart_data,
-                x="Date",
-                y=["Incidents", "7-Day Average"],
-                title="Daily Incidents With 7-Day Average",
-                labels={
-                    "value": "Incident Count",
-                    "variable": "Metric"
-                }
-            )
-
-        elif time_scale == "Weekly":
-            chart_data = (
-                daily_counts
-                .set_index("Date")
-                .resample("W")
-                .sum()
-                .reset_index()
-            )
-
-            fig = px.line(
-                chart_data,
-                x="Date",
-                y="Incidents",
-                title="Weekly Incident Totals",
-                labels={
-                    "Incidents": "Incident Count"
-                }
-            )
-
-        else:
-            chart_data = (
-                daily_counts
-                .set_index("Date")
-                .resample("ME")
-                .sum()
-                .reset_index()
-            )
-
-            fig = px.line(
-                chart_data,
-                x="Date",
-                y="Incidents",
-                title="Monthly Incident Totals",
-                labels={
-                    "Incidents": "Incident Count"
-                }
-            )
-
-        fig.update_layout(
-            hovermode="x unified",
-            height=450,
-            plot_bgcolor="#111827",
-            paper_bgcolor="#111827",
-            font=dict(color="white"),
-            margin=dict(l=20, r=20, t=60, b=20)
+        fig = px.line(
+            chart_data,
+            x="Date",
+            y="Incidents",
+            title="Weekly Incident Totals",
+            labels={
+                "Incidents": "Incident Count"
+            }
         )
 
-        st.plotly_chart(fig, use_container_width=True)
-
     else:
-        st.info("No date data available.")
+        chart_data = (
+            daily_counts
+            .set_index("Date")
+            .resample("ME")
+            .sum()
+            .reset_index()
+        )
+
+        fig = px.line(
+            chart_data,
+            x="Date",
+            y="Incidents",
+            title="Monthly Incident Totals",
+            labels={
+                "Incidents": "Incident Count"
+            }
+        )
+
+    fig.update_layout(
+        hovermode="x unified",
+        height=450,
+        plot_bgcolor="#111827",
+        paper_bgcolor="#111827",
+        font=dict(color="white"),
+        margin=dict(l=20, r=20, t=60, b=20)
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+else:
+    st.info("No date data available.")
 with tab2:
     st.subheader("Master Incident Table")
     display_cols = [

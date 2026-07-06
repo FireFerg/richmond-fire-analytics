@@ -156,3 +156,69 @@ section[data-testid="stSidebar"] p {
     justify-content: space-between;
     font-size: 14px;
 }
+
+.chart-card{
+    background:#151b23;
+
+    border:1px solid #2d333d;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    margin-bottom:20px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.25);
+}
+
+.chart-title{
+
+    color:white;
+
+    font-size:22px;
+
+    font-weight:700;
+}
+
+.chart-subtitle{
+
+    color:#9aa5b1;
+
+    margin-bottom:15px;
+
+    font-size:14px;
+}
+
+.chart-footer{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-top:15px;
+
+    color:#d1d5db;
+
+    font-size:14px;
+
+    border-top:1px solid #2d333d;
+
+    padding-top:12px;
+}
+
+.section-spacing {
+    margin-top: 35px;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.section-subtitle {
+    color: #9aa5b1;
+    margin-bottom: 18px;
+}
