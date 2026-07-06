@@ -7,6 +7,38 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 
+def load_css(file_path):
+    with open(file_path) as f:
+        st.markdown(
+    """
+    <div class="dashboard-header">
+        <div class="dashboard-title">Richmond Fire Analytics</div>
+        <div class="dashboard-subtitle">
+            Key incident and apparatus response overview
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
+load_css("styles/main.css")
+
+with st.sidebar:
+    st.markdown(
+        """
+        <div class="sidebar-title">RICHMOND<br>FIRE ANALYTICS</div>
+        <div class="sidebar-subtitle">Incident Intelligence</div>
+
+        <div class="sidebar-nav-item sidebar-nav-item-active">📊 Overview</div>
+        <div class="sidebar-nav-item">🗺️ Map</div>
+        <div class="sidebar-nav-item">🚒 Companies</div>
+        <div class="sidebar-nav-item">🏢 Districts</div>
+        <div class="sidebar-nav-item">📄 Reports</div>
+        <div class="sidebar-nav-item">ℹ️ About</div>
+        """,
+        unsafe_allow_html=True
+    )
 
 st.set_page_config(
     page_title="Richmond Fire Analytics",
@@ -26,11 +58,30 @@ def is_display_unit(unit):
     )
 
 
+def normalize_unit(unit):
+    unit = str(unit).strip().upper()
+
+    if unit == "TOWER5":
+        return "T5"
+
+    return unit
+
+
+def is_display_unit(unit):
+    unit = normalize_unit(unit)
+
+    return (
+        unit.startswith("E")
+        or unit.startswith("T")
+        or unit.startswith("BC")
+    )
+
+
 def split_units(units):
     if not units:
         return []
 
-    all_units = [u.strip().upper() for u in str(units).split(",") if u.strip()]
+    all_units = [normalize_unit(u) for u in str(units).split(",") if u.strip()]
 
     return [u for u in all_units if is_display_unit(u)]
 
@@ -177,7 +228,24 @@ def download_csv_button(df, label, filename):
     st.download_button(label, csv, filename, "text/csv")
 
 
-st.title("🔥 Richmond Fire Analytics Dashboard")
+st.markdown(
+    """
+    <div style="
+        background: linear-gradient(90deg, #7f0000, #d7263d);
+        padding: 24px;
+        border-radius: 14px;
+        margin-bottom: 20px;
+    ">
+        <h1 style="color: white; margin: 0; font-size: 38px;">
+            🔥 Richmond Fire Analytics
+        </h1>
+        <p style="color: #f5f5f5; margin: 6px 0 0 0; font-size: 17px;">
+            Incident trends, unit activity, district workload, and operational insights
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 uploaded_file = st.sidebar.file_uploader("Upload a new incident export", type=["txt", "json"])
 incidents_df, units_df = load_incidents(uploaded_file)
@@ -232,16 +300,81 @@ filtered_df = apply_filters(
 
 filtered_units_df = units_df[units_df["Incident Number"].isin(filtered_df["Incident Number"])]
 
-top_unit = filtered_units_df["Unit"].value_counts().index[0] if not filtered_units_df.empty else "N/A"
-top_district = filtered_df["District"].replace("", pd.NA).dropna().value_counts().index[0] if not filtered_df.empty else "N/A"
-top_shift = filtered_df["Shift"].replace("", pd.NA).dropna().value_counts().index[0] if not filtered_df.empty and filtered_df["Shift"].replace("", pd.NA).dropna().size else "N/A"
+# Count all displayed units
+unit_counts = (
+    filtered_units_df["Unit"].value_counts()
+    if not filtered_units_df.empty
+    else pd.Series(dtype=int)
+)
+
+# Engines only
+engine_counts = unit_counts[
+    unit_counts.index.str.startswith("E")
+] if not unit_counts.empty else pd.Series(dtype=int)
+
+# Trucks (T and TOWER are already normalized to T)
+truck_counts = unit_counts[
+    unit_counts.index.str.startswith("T")
+] if not unit_counts.empty else pd.Series(dtype=int)
+
+top_engine = engine_counts.index[0] if not engine_counts.empty else "N/A"
+top_truck = truck_counts.index[0] if not truck_counts.empty else "N/A"
+
+top_engine_count = int(engine_counts.iloc[0]) if not engine_counts.empty else 0
+top_truck_count = int(truck_counts.iloc[0]) if not truck_counts.empty else 0
+
+top_district = (
+    filtered_df["District"]
+    .replace("", pd.NA)
+    .dropna()
+    .value_counts()
+    .index[0]
+    if not filtered_df.empty
+    and filtered_df["District"].replace("", pd.NA).dropna().size
+    else "N/A"
+)
+
+top_shift = (
+    filtered_df["Shift"]
+    .replace("", pd.NA)
+    .dropna()
+    .value_counts()
+    .index[0]
+    if not filtered_df.empty
+    and filtered_df["Shift"].replace("", pd.NA).dropna().size
+    else "N/A"
+)
+
+def kpi_card(title, value, icon, note=""):
+    st.markdown(
+        f"""
+        <div class="kpi-card">
+            <div class="kpi-icon">{icon}</div>
+            <div class="kpi-label">{title}</div>
+            <div class="kpi-value">{value}</div>
+            <div class="kpi-note">{note}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 
 col1, col2, col3, col4, col5 = st.columns(5)
-col1.metric("Total Incidents", len(filtered_df))
-col2.metric("Unique Units", filtered_units_df["Unit"].nunique() if not filtered_units_df.empty else 0)
-col3.metric("Top Unit", top_unit)
-col4.metric("Top District", top_district)
-col5.metric("Top Shift", top_shift)
+
+with col1:
+    kpi_card("Total Incidents", len(filtered_df), "🔥", "Selected dataset")
+
+with col2:
+    kpi_card("Top Engine", top_engine, "🚒", f"{top_engine_count} responses")
+
+with col3:
+    kpi_card("Top Truck", top_truck, "🚛", f"{top_truck_count} responses")
+
+with col4:
+    kpi_card("Top District", top_district, "📍")
+
+with col5:
+    kpi_card("Top Shift", top_shift, "🕒")
 
 st.divider()
 
@@ -254,33 +387,101 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 ])
 
 with tab1:
-    left, right = st.columns(2)
+    left, middle, right = st.columns(3)
 
     with left:
-        st.subheader("Incidents by Shift")
-        shift_counts = value_counts_df(filtered_df, "Shift", "Shift")
-        st.bar_chart(shift_counts.set_index("Shift") if not shift_counts.empty else shift_counts)
+        st.subheader("Top Districts")
 
-        st.subheader("Top Incident Types")
-        type_counts = Counter()
-        for val in filtered_df["Incident Type"].dropna():
-            for part in str(val).split(","):
-                part = part.strip()
-                if part:
-                    type_counts[part] += 1
-        type_df = pd.DataFrame(type_counts.most_common(15), columns=["Incident Type", "Count"])
-        st.bar_chart(type_df.set_index("Incident Type") if not type_df.empty else type_df)
+        district_counts = (
+            filtered_df["District"]
+            .replace("", pd.NA)
+            .dropna()
+            .value_counts()
+            .reset_index()
+        )
+
+        district_counts.columns = ["District", "Count"]
+        district_counts = district_counts.sort_values("Count", ascending=False)
+
+        fig = px.bar(
+            district_counts.head(10),
+            x="Count",
+            y="District",
+            orientation="h",
+            title="Top Districts"
+        )
+
+        fig.update_layout(
+            yaxis=dict(autorange="reversed"),
+            height=450,
+            margin=dict(l=20, r=20, t=50, b=20)
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+    with middle:
+        st.subheader("Top Engines")
+
+        engine_counts_df = (
+            filtered_units_df[
+                filtered_units_df["Unit"].str.startswith("E")
+            ]["Unit"]
+            .value_counts()
+            .reset_index()
+        )
+
+        engine_counts_df.columns = ["Engine", "Count"]
+        engine_counts_df = engine_counts_df.sort_values("Count", ascending=False)
+
+        fig = px.bar(
+            engine_counts_df.head(10),
+            x="Count",
+            y="Engine",
+            orientation="h",
+            title="Top Engines"
+        )
+
+        fig.update_layout(
+            yaxis=dict(autorange="reversed"),
+            height=450,
+            margin=dict(l=20, r=20, t=50, b=20)
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
 
     with right:
-        st.subheader("Top Districts")
-        district_counts = value_counts_df(filtered_df, "District", "District").head(15)
-        st.bar_chart(district_counts.set_index("District") if not district_counts.empty else district_counts)
+        st.subheader("Top Trucks")
 
-        st.subheader("Top Stations")
-        station_counts = value_counts_df(filtered_df, "Station", "Station").head(15)
-        st.bar_chart(station_counts.set_index("Station") if not station_counts.empty else station_counts)
+        truck_counts_df = (
+            filtered_units_df[
+                filtered_units_df["Unit"].str.startswith("T")
+            ]["Unit"]
+            .value_counts()
+            .reset_index()
+        )
 
-    st.subheader("Incidents Over Time")
+        truck_counts_df.columns = ["Truck", "Count"]
+        truck_counts_df = truck_counts_df.sort_values("Count", ascending=False)
+
+        fig = px.bar(
+            truck_counts_df.head(10),
+            x="Count",
+            y="Truck",
+            orientation="h",
+            title="Top Trucks"
+        )
+
+        fig.update_layout(
+            yaxis=dict(autorange="reversed"),
+            height=450,
+            margin=dict(l=20, r=20, t=50, b=20)
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.subheader("Incidents Over Time")
+
+
 
 if not filtered_df.empty and filtered_df["Date"].notna().any():
 
