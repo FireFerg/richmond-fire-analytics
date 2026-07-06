@@ -222,3 +222,12 @@ section[data-testid="stSidebar"] p {
     color: #9aa5b1;
     margin-bottom: 18px;
 }
+
+.timeline-card{
+    background:#151b23;
+    border:1px solid #2d333d;
+    border-radius:18px;
+    padding:24px;
+    margin-top:25px;
+    margin-bottom:20px;
+}

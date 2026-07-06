@@ -321,6 +321,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 ])
 
 with tab1:
+    st.markdown('<div class="timeline-card">', unsafe_allow_html=True)
     st.markdown("""
 <div class="section-spacing">
     <div class="section-title">
@@ -374,6 +375,7 @@ with chart_col1:
     )
 
     st.plotly_chart(fig, use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with chart_col2:
     st.subheader("🚒 Top Engines")
@@ -481,7 +483,7 @@ if not filtered_df.empty and filtered_df["Date"].notna().any():
 
     full_daily_dates = pd.date_range(
         start=f"{year}-01-01",
-        end=f"{year}-12-31",
+        end=date_data["Date"].max(),
         freq="D"
     )
 
@@ -512,6 +514,22 @@ if not filtered_df.empty and filtered_df["Date"].notna().any():
                 "variable": "Metric"
             }
         )
+        fig.update_traces(
+            line=dict(width=2),
+            marker=dict(size=5),
+            selector=dict(name="Incidents")
+        )
+
+        fig.update_traces(
+            line=dict(width=4, color="#ff8500"),
+            selector=dict(name="7-Day Average")
+        )
+
+        fig.update_traces(
+            line=dict(color="#ef233c"),
+            selector=dict(name="Incidents")
+        )
+
 
     elif time_scale == "Weekly":
         chart_data = (
@@ -553,12 +571,22 @@ if not filtered_df.empty and filtered_df["Date"].notna().any():
 
     fig.update_layout(
         hovermode="x unified",
-        height=450,
-        plot_bgcolor="#111827",
-        paper_bgcolor="#111827",
+        height=460,
+        plot_bgcolor="#151b23",
+        paper_bgcolor="#151b23",
         font=dict(color="white"),
-        margin=dict(l=20, r=20, t=60, b=20)
-    )
+        margin=dict(l=20, r=20, t=40, b=20),
+
+        xaxis=dict(
+            showgrid=False,
+            zeroline=False
+        ),
+
+        yaxis=dict(
+            gridcolor="rgba(255,255,255,.08)",
+            zeroline=False
+        )
+)
 
     st.plotly_chart(fig, use_container_width=True)
 
