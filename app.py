@@ -3,6 +3,8 @@ from collections import Counter
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+from pathlib import Path
+from datetime import datetime
 
 from utils.data_loader import load_incidents
 
@@ -20,26 +22,25 @@ def load_css(file_path):
 
 load_css("styles/main.css")
 
+data_file = Path("data/Incidents.txt")
 
-load_css("styles/main.css")
+if data_file.exists():
+    last_updated = datetime.fromtimestamp(
+        data_file.stat().st_mtime
+    ).strftime("%B %d, %Y at %I:%M %p")
+else:
+    last_updated = "Unknown"
 
-with st.sidebar:
-    st.markdown(
-        """
-        <div class="sidebar-title">RICHMOND<br>FIRE ANALYTICS</div>
-        <div class="sidebar-subtitle">Incident Intelligence</div>
-
-        <div class="sidebar-nav-item sidebar-nav-item-active">📊 Overview</div>
-        <div class="sidebar-nav-item">🗺️ Map</div>
-        <div class="sidebar-nav-item">🚒 Companies</div>
-        <div class="sidebar-nav-item">🏢 Districts</div>
-        <div class="sidebar-nav-item">📄 Reports</div>
-        <div class="sidebar-nav-item">ℹ️ About</div>
-        """,
-        unsafe_allow_html=True
-    )
-
-
+st.sidebar.markdown(
+    """
+    <div class="sidebar-brand">
+        <div class="sidebar-logo">🔥</div>
+        <div class="sidebar-title">RICHMOND</div>
+        <div class="sidebar-title">FIRE ANALYTICS</div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 def apply_filters(
     df,
@@ -107,29 +108,20 @@ def download_csv_button(df, label, filename):
     st.download_button(label, csv, filename, "text/csv")
 
 
-st.markdown(
-    """
-    <div style="
-        background: linear-gradient(90deg, #7f0000, #d7263d);
-        padding: 24px;
-        border-radius: 14px;
-        margin-bottom: 20px;
-    ">
-        <h1 style="color: white; margin: 0; font-size: 38px;">
-            🔥 Richmond Fire Analytics
-        </h1>
-        <p style="color: #f5f5f5; margin: 6px 0 0 0; font-size: 17px;">
-            Incident trends, unit activity, district workload, and operational insights
-        </p>
+st.markdown("""
+<div class="dashboard-header">
+    <div class="dashboard-title">Overview</div>
+    <div class="dashboard-subtitle">
+        Key incident and response overview
     </div>
-    """,
-    unsafe_allow_html=True
-)
+</div>
+""", unsafe_allow_html=True)
 
-uploaded_file = st.sidebar.file_uploader("Upload a new incident export", type=["txt", "json"])
+uploaded_file = None
 incidents_df, units_df = load_incidents(uploaded_file)
 
 st.sidebar.header("Filters")
+st.caption(f"Data last updated: {last_updated}")
 
 district_options = sorted([x for x in incidents_df["District"].dropna().unique() if x])
 shift_options = sorted([x for x in incidents_df["Shift"].dropna().unique() if x])

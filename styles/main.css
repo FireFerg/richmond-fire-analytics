@@ -231,3 +231,38 @@ section[data-testid="stSidebar"] p {
     margin-top:25px;
     margin-bottom:20px;
 }
+
+.sidebar-brand {
+    text-align: center;
+    padding: 18px 8px 24px 8px;
+    border-bottom: 1px solid #2b313b;
+    margin-bottom: 18px;
+}
+
+.sidebar-logo {
+    font-size: 54px;
+    margin-bottom: 8px;
+}
+
+.sidebar-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: white;
+    line-height: 1.2;
+}
+
+.sidebar-nav-item {
+    padding: 14px 16px;
+    margin: 10px 0;
+    border-radius: 10px;
+    color: #d7dce5;
+    font-size: 17px;
+    border: 1px solid transparent;
+}
+
+.sidebar-nav-item-active {
+    background: rgba(215, 38, 61, 0.20);
+    border: 1px solid #d7263d;
+    color: white;
+}
+
