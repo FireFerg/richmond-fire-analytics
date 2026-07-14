@@ -77,6 +77,10 @@ selected_shifts = st.sidebar.multiselect("Shift", shifts, key="map_shifts")
 
 filtered_map_df = map_df.copy()
 
+if filtered_map_df.empty:
+    st.info("No incidents match the selected filters.")
+    st.stop()
+
 if selected_districts:
     filtered_map_df = filtered_map_df[
         filtered_map_df["District"].astype(str).isin(selected_districts)

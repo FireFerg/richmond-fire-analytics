@@ -39,6 +39,9 @@ else:
     label = "Truck"
     color = "#1f6feb"
 
+if company_df.empty:
+    st.warning("No company data found.")
+    st.stop()
 
 company_options = sorted(
     company_df["Unit"]
@@ -55,6 +58,10 @@ selected_company = st.selectbox(
 selected_company_df = company_df[
     company_df["Unit"] == selected_company
 ].copy()
+
+if selected_company_df.empty:
+    st.warning("No responses found for this company.")
+    st.stop()
 
 selected_incident_numbers = (
     selected_company_df["Incident Number"]

@@ -121,7 +121,7 @@ uploaded_file = None
 incidents_df, units_df = load_incidents(uploaded_file)
 
 st.sidebar.header("Filters")
-st.caption(f"Data last updated: {last_updated}")
+st.caption(f"Data last updated: {last_updated}. Informational use only, Not a live dispatch system. Created by FF Fergus Hughes")
 
 district_options = sorted([x for x in incidents_df["District"].dropna().unique() if x])
 shift_options = sorted([x for x in incidents_df["Shift"].dropna().unique() if x])

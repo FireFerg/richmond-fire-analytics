@@ -38,6 +38,10 @@ selected_incidents_df = incidents_df[
     incidents_df["District"].astype(str) == selected_district
 ].copy()
 
+if selected_incidents_df.empty:
+    st.warning("No incidents found for this district.")
+    st.stop()
+
 selected_incident_numbers = (
     selected_incidents_df["Incident Number"]
     .dropna()
