@@ -304,12 +304,11 @@ with col5:
 
 st.divider()
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4 = st.tabs([
     "Overview",
+    "Engines",
+    "Trucks",
     "Incidents",
-    "Unit Analysis",
-    "District / Shift",
-    "Map Export",
 ])
 
 with tab1:
@@ -584,7 +583,88 @@ if not filtered_df.empty and filtered_df["Date"].notna().any():
 
 else:
     st.info("No date data available.")
+
 with tab2:
+    st.subheader("🚒 Engine Responses")
+
+    engine_counts_df = (
+        filtered_units_df[
+            filtered_units_df["Unit"].str.startswith("E")
+        ]["Unit"]
+        .value_counts()
+        .reset_index()
+    )
+
+    engine_counts_df.columns = ["Engine", "Responses"]
+    engine_counts_df = engine_counts_df.sort_values("Responses", ascending=False)
+
+    fig = px.bar(
+        engine_counts_df,
+        x="Engine",
+        y="Responses",
+        text="Responses",
+    )
+
+    fig.update_traces(
+        textposition="outside",
+        marker_color="#ff8500"
+    )
+
+    fig.update_layout(
+        height=500,
+        xaxis_title="Engine",
+        yaxis_title="Responses",
+        plot_bgcolor="#111827",
+        paper_bgcolor="#111827",
+        font=dict(color="white"),
+        margin=dict(l=20, r=20, t=20, b=40),
+        showlegend=False
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+    st.dataframe(engine_counts_df, use_container_width=True)
+
+
+with tab3:
+    st.subheader("🚛 Truck Responses")
+
+    truck_counts_df = (
+        filtered_units_df[
+            filtered_units_df["Unit"].str.startswith("T")
+        ]["Unit"]
+        .value_counts()
+        .reset_index()
+    )
+
+    truck_counts_df.columns = ["Truck", "Responses"]
+    truck_counts_df = truck_counts_df.sort_values("Responses", ascending=False)
+
+    fig = px.bar(
+        truck_counts_df,
+        x="Truck",
+        y="Responses",
+        text="Responses",
+    )
+
+    fig.update_traces(
+        textposition="outside",
+        marker_color="#1f6feb"
+    )
+
+    fig.update_layout(
+        height=500,
+        xaxis_title="Truck",
+        yaxis_title="Responses",
+        plot_bgcolor="#111827",
+        paper_bgcolor="#111827",
+        font=dict(color="white"),
+        margin=dict(l=20, r=20, t=20, b=40),
+        showlegend=False
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+    st.dataframe(truck_counts_df, use_container_width=True)
+with tab4:
     st.subheader("Master Incident Table")
     display_cols = [
         "Incident Number", "Date/Time", "Address", "District", "Station",
@@ -593,57 +673,4 @@ with tab2:
     st.dataframe(filtered_df[display_cols], use_container_width=True, height=500)
     download_csv_button(filtered_df, "Download Filtered Incidents CSV", "filtered_incidents.csv")
 
-with tab3:
-    st.subheader("Unit Frequency")
-    unit_counts = (
-        filtered_units_df["Unit"].value_counts().reset_index()
-        if not filtered_units_df.empty else pd.DataFrame(columns=["Unit", "Count"])
-    )
-    if not unit_counts.empty:
-        unit_counts.columns = ["Unit", "Count"]
-    st.dataframe(unit_counts, use_container_width=True)
-    st.bar_chart(unit_counts.head(20).set_index("Unit") if not unit_counts.empty else unit_counts)
 
-    st.subheader("Unit by Shift")
-    if not filtered_units_df.empty:
-        unit_shift = pd.crosstab(filtered_units_df["Unit"], filtered_units_df["Shift"])
-        unit_shift["Total"] = unit_shift.sum(axis=1)
-        unit_shift = unit_shift.sort_values("Total", ascending=False)
-        st.dataframe(unit_shift, use_container_width=True)
-    else:
-        st.info("No unit data available.")
-
-with tab4:
-    st.subheader("District by Shift")
-    if not filtered_df.empty:
-        district_shift = pd.crosstab(filtered_df["District"], filtered_df["Shift"])
-        district_shift["Total"] = district_shift.sum(axis=1)
-        district_shift = district_shift.sort_values("Total", ascending=False)
-        st.dataframe(district_shift, use_container_width=True)
-
-        st.subheader("Hour of Day")
-        hour_counts = filtered_df.dropna(subset=["Hour"]).groupby("Hour").size().reset_index(name="Count")
-        st.bar_chart(hour_counts.set_index("Hour") if not hour_counts.empty else hour_counts)
-    else:
-        st.info("No incident data available.")
-
-with tab5:
-    st.subheader("Google My Maps Export")
-    map_cols = ["Incident Number", "Address", "Full Address", "Date/Time", "District", "Station", "Shift", "Incident Type", "Units"]
-    map_df = filtered_df[map_cols].copy()
-    map_df = map_df[map_df["Address"].fillna("") != ""]
-    map_df = map_df.rename(columns={"Incident Number": "Name"})
-    st.dataframe(map_df, use_container_width=True, height=400)
-    download_csv_button(map_df, "Download Google My Maps CSV", "google_my_maps_import_filtered.csv")
-
-    st.markdown(
-        """
-        **Google My Maps steps:**
-        1. Go to `mymaps.google.com`
-        2. Create a new map
-        3. Import this CSV
-        4. Choose **Full Address** as the location column
-        5. Choose **Name** as the marker title
-        6. Style by **District**, **Shift**, or **Incident Type**
-        """
-    )

@@ -18,13 +18,7 @@ st.set_page_config(
 st.title("🗺️ Incident Map")
 st.write("Interactive map of Richmond fire incidents.")
 
-uploaded_file = st.sidebar.file_uploader(
-    "Upload a new incident export",
-    type=["txt", "json"],
-    key="map_upload"
-)
-
-incidents_df, units_df = load_incidents(uploaded_file)
+incidents_df, units_df = load_incidents(None)
 
 cache_path = Path("data/geocoded_incidents.csv")
 
