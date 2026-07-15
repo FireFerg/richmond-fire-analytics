@@ -1,8 +1,19 @@
+# Python
 __pycache__/
 *.pyc
 .venv/
 venv/
 .env
-.streamlit/
+
+# OS
 .DS_Store
 Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Update workflow
+data/new_incidents.txt
+data/Incidents_backup_*.txt
+backups/
+archive/
