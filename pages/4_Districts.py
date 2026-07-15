@@ -1,14 +1,22 @@
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+import streamlit as st
+
+from utils.paths import LOGO, FAVICON
 
 from utils.data_loader import load_incidents
 
 
 st.set_page_config(
-    page_title="Districts",
-    page_icon="📍",
+    page_title="Districts | RVA Fire Data",
+    page_icon=str(FAVICON),
     layout="wide",
+)
+
+st.sidebar.image(
+    str(LOGO),
+    use_container_width=True
 )
 
 st.title("📍 Districts")

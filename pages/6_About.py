@@ -1,10 +1,17 @@
 import streamlit as st
 
+from utils.paths import LOGO, FAVICON
+
 
 st.set_page_config(
-    page_title="About",
-    page_icon="ℹ️",
+    page_title="About | RVA Fire Data",
+    page_icon=str(FAVICON),
     layout="wide",
+)
+
+st.sidebar.image(
+    str(LOGO),
+    use_container_width=True
 )
 
 st.title("ℹ️ About Richmond Fire Analytics")

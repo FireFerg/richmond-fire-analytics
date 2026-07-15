@@ -3,14 +3,18 @@ from collections import Counter
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+import streamlit as st
+
+from utils.paths import LOGO, FAVICON
 from pathlib import Path
 from datetime import datetime
 
 from utils.data_loader import load_incidents
 
+
 st.set_page_config(
-    page_title="Richmond Fire Analytics",
-    page_icon="🔥",
+    page_title="RVA Fire Data",
+    page_icon=str(FAVICON),
     layout="wide",
 )
 
@@ -31,16 +35,12 @@ if data_file.exists():
 else:
     last_updated = "Unknown"
 
-st.sidebar.markdown(
-    """
-    <div class="sidebar-brand">
-        <div class="sidebar-logo">🔥</div>
-        <div class="sidebar-title">RICHMOND</div>
-        <div class="sidebar-title">FIRE ANALYTICS</div>
-    </div>
-    """,
-    unsafe_allow_html=True
+st.sidebar.image(
+    str(LOGO),
+    use_container_width=True
 )
+
+
 
 def apply_filters(
     df,
