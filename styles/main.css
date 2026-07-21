@@ -266,3 +266,12 @@ section[data-testid="stSidebar"] p {
     color: white;
 }
 
+#MainMenu,
+header,
+footer {
+    display: none !important;
+}
+
+[data-testid="stToolbar"] {
+    display: none;
+}
