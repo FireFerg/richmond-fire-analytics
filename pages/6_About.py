@@ -1,13 +1,17 @@
 import streamlit as st
 
 from utils.paths import LOGO, FAVICON
+from utils.ui import load_css
 
 
 st.set_page_config(
     page_title="About | RVA Fire Data",
     page_icon=str(FAVICON),
     layout="wide",
+    initial_sidebar_state="expanded"
 )
+
+load_css()
 
 st.sidebar.image(
     str(LOGO),

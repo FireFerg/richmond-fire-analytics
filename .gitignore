@@ -17,3 +17,5 @@ data/new_incidents.txt
 data/Incidents_backup_*.txt
 backups/
 archive/
+
+data/geocoded_incidents_backup_*.csv

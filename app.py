@@ -16,6 +16,7 @@ st.set_page_config(
     page_title="RVA Fire Data",
     page_icon=str(FAVICON),
     layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 

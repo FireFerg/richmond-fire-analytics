@@ -267,11 +267,11 @@ section[data-testid="stSidebar"] p {
 }
 
 #MainMenu,
-header,
 footer {
     display: none !important;
 }
 
-[data-testid="stToolbar"] {
-    display: none;
+/* Hide only the Deploy button */
+button[data-testid="stBaseButton-header"] {
+    display: none !important;
 }

@@ -1,7 +1,6 @@
 import pandas as pd
 import streamlit as st
 import folium
-import streamlit as st
 
 from utils.paths import LOGO, FAVICON
 from streamlit_folium import st_folium
@@ -9,6 +8,7 @@ from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
 from pathlib import Path
 
+from utils.ui import load_css
 from utils.data_loader import load_incidents
 from folium.plugins import MarkerCluster
 
@@ -16,7 +16,10 @@ st.set_page_config(
     page_title="Maps | RVA Fire Data",
     page_icon=str(FAVICON),
     layout="wide",
+    initial_sidebar_state="expanded"
 )
+
+load_css()
 
 st.sidebar.image(
     str(LOGO),
