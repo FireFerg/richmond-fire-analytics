@@ -54,7 +54,6 @@ st.markdown(
 
     ### Contact
 
-    Questions, corrections, or feedback can be submitted through the project's
-    GitHub repository.
+    Questions, corrections, or feedback can be emailed to fergus.hughes@rva.gov
     """
 )
