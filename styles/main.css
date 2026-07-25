@@ -275,3 +275,8 @@ footer {
 button[data-testid="stBaseButton-header"] {
     display: none !important;
 }
+
+/* Hide Streamlit's temporary running/loading status icons */
+div[data-testid="stStatusWidget"] {
+    display: none !important;
+}
