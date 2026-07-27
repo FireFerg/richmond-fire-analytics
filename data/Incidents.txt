@@ -1,8 +1,32 @@
 {
     "pageNumber": 0,
     "pageSize": 100,
-    "totalCount": 106,
+    "totalCount": 107,
     "incidents": [
+        {
+            "incidentId": 7965606,
+            "incidentNumber": "F02607260012",
+            "nerisIncidentNumber": "F02607260012_639206657504449385",
+            "incidentOnsetDateTime": "2026-07-26T01:36:00-04:00",
+            "incidentStatusTypeId": 3,
+            "streetAddress": "3014 CHAMBERLAYNE Avenue",
+            "types": "Structural involvement, Room and contents fire",
+            "validationIssuesCount": 0,
+            "battalion": "01",
+            "division": "01",
+            "station": "Station 14",
+            "shift": "B Shift",
+            "district": "14",
+            "zone": "Station",
+            "units": "BC2, AL1, T2, BC3, TOWER5, E12, E1, E18, REHAB1, T6, T7, SAFETY1, E16, E5, E15, E10, E14, BC1",
+            "reportWriter": "MADGAR, ALEX J | 158692",
+            "incidentSubmissionStatusTypeId": 3,
+            "incidentLastSubmittedDate": "2026-07-26T12:29:13.499585+00:00",
+            "attachmentCount": 1,
+            "hasImportUpdatesAvailable": false,
+            "cadLatestSubmission": "2026-07-26T09:35:33.932881+00:00",
+            "pcrs": []
+        },
         {
             "incidentId": 7916983,
             "incidentNumber": "F02607240080",
