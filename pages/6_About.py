@@ -18,11 +18,11 @@ st.sidebar.image(
     use_container_width=True
 )
 
-st.title("ℹ️ About Richmond Fire Analytics")
+st.title("ℹ️ About Richmond Fire Data")
 
 st.markdown(
     """
-    Richmond Fire Analytics is an independent data visualization project
+    Richmond Fire Data is an independent data visualization project
     focused on Richmond Fire incident activity created by Firefighter Fergus Hughes.
 
     The site is designed to make incident data easier to explore through:
