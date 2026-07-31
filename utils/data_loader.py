@@ -109,11 +109,48 @@ def load_incidents(file):
     incidents_df = pd.DataFrame(rows)
     units_df = pd.DataFrame(unit_rows)
 
+    # Exclude hazardous-material incidents everywhere in the app
     if not incidents_df.empty:
-        incidents_df["Date/Time"] = pd.to_datetime(incidents_df["Date/Time"], errors="coerce")
-        incidents_df["Date"] = pd.to_datetime(incidents_df["Date"], errors="coerce")
+        hazmat_mask = (
+            incidents_df["Incident Type"]
+            .fillna("")
+            .str.contains("hazardous material", case=False, regex=False)
+        )
+
+        excluded_incident_numbers = set(
+            incidents_df.loc[hazmat_mask, "Incident Number"]
+            .dropna()
+            .astype(str)
+        )
+
+        incidents_df = incidents_df.loc[~hazmat_mask].copy()
+
+        if not units_df.empty and excluded_incident_numbers:
+            units_df = units_df[
+                ~units_df["Incident Number"]
+                .fillna("")
+                .astype(str)
+                .isin(excluded_incident_numbers)
+            ].copy()
+
+    if not incidents_df.empty:
+        incidents_df["Date/Time"] = pd.to_datetime(
+            incidents_df["Date/Time"],
+            errors="coerce"
+        )
+        incidents_df["Date"] = pd.to_datetime(
+            incidents_df["Date"],
+            errors="coerce"
+        )
+
     if not units_df.empty:
-        units_df["Date/Time"] = pd.to_datetime(units_df["Date/Time"], errors="coerce")
-        units_df["Date"] = pd.to_datetime(units_df["Date"], errors="coerce")
+        units_df["Date/Time"] = pd.to_datetime(
+            units_df["Date/Time"],
+            errors="coerce"
+        )
+        units_df["Date"] = pd.to_datetime(
+            units_df["Date"],
+            errors="coerce"
+        )
 
     return incidents_df, units_df
