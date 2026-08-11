@@ -305,10 +305,11 @@ with col5:
 
 st.divider()
 
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "Overview",
     "Engines",
     "Trucks",
+    "Districts",
     "Incidents",
 ])
 
@@ -666,6 +667,65 @@ with tab3:
     st.plotly_chart(fig, use_container_width=True)
     st.dataframe(truck_counts_df, use_container_width=True)
 with tab4:
+    st.subheader("📍 District Incidents")
+
+    district_counts_df = (
+        filtered_df["District"]
+        .replace("", pd.NA)
+        .dropna()
+        .astype(str)
+        .value_counts()
+        .reset_index()
+    )
+
+    district_counts_df.columns = ["District", "Incidents"]
+
+    district_counts_df = district_counts_df.sort_values(
+        "Incidents",
+        ascending=False
+    )
+
+    fig = px.bar(
+        district_counts_df,
+        x="District",
+        y="Incidents",
+        text="Incidents",
+    )
+
+    fig.update_traces(
+        textposition="outside",
+        marker_color="#ef233c"
+    )
+
+    # Important: treat district numbers as categories,
+    # not a continuous number scale
+    fig.update_xaxes(
+        type="category",
+        categoryorder="array",
+        categoryarray=district_counts_df["District"].tolist()
+    )
+
+    fig.update_layout(
+        height=500,
+        xaxis_title="District",
+        yaxis_title="Incidents",
+        plot_bgcolor="#111827",
+        paper_bgcolor="#111827",
+        font=dict(color="white"),
+        margin=dict(l=20, r=20, t=20, b=40),
+        showlegend=False
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
+
+    st.dataframe(
+        district_counts_df,
+        use_container_width=True
+    )
+with tab5:
     st.subheader("Master Incident Table")
     display_cols = [
         "Incident Number", "Date/Time", "Address", "District", "Station",
