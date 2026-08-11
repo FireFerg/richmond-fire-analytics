@@ -1,8 +1,32 @@
 {
     "pageNumber": 0,
     "pageSize": 100,
-    "totalCount": 111,
+    "totalCount": 112,
     "incidents": [
+        {
+            "incidentId": 8393175,
+            "incidentNumber": "F02608070020",
+            "nerisIncidentNumber": "F02608070020_639218116407871567",
+            "incidentOnsetDateTime": "2026-08-07T06:05:26-04:00",
+            "incidentStatusTypeId": 3,
+            "streetAddress": "1411 N 23RD Street",
+            "types": "Structural involvement",
+            "validationIssuesCount": 0,
+            "battalion": "01",
+            "station": "Station 11",
+            "shift": "C Shift",
+            "district": "11",
+            "zone": "In District",
+            "units": "T2, TOWER5, SAFETY1, E6, E15, E11, E5, BC3, E1, BC1, AL1, REHAB1",
+            "reportWriter": "SAMUELS, CARLOS D | 104650",
+            "incidentSubmissionStatusTypeId": 3,
+            "incidentLastSubmittedDate": "2026-08-08T18:47:21.084441+00:00",
+            "attachmentCount": 0,
+            "hasImportUpdatesAvailable": false,
+            "cadLatestSubmission": "2026-08-07T11:56:24.584691+00:00",
+            "pcrs": [],
+            "pendingAutoLock": false
+        },
         {
             "incidentId": 8350154,
             "incidentNumber": "F02608050125",
