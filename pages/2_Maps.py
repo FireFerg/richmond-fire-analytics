@@ -2,15 +2,16 @@ import pandas as pd
 import streamlit as st
 import folium
 
-from utils.paths import LOGO, FAVICON
+from pathlib import Path
 from streamlit_folium import st_folium
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
-from pathlib import Path
+from folium.plugins import MarkerCluster
 
+from utils.paths import LOGO, FAVICON
 from utils.ui import load_css
 from utils.data_loader import load_incidents
-from folium.plugins import MarkerCluster
+
 
 st.set_page_config(
     page_title="Maps | RVA Fire Data",
@@ -29,6 +30,9 @@ st.sidebar.image(
 st.title("🗺️ Incident Map")
 st.write("Interactive map of Richmond fire incidents.")
 
+
+# ---------- Load Data ----------
+
 incidents_df, units_df = load_incidents(None)
 
 cache_path = Path("data/geocoded_incidents.csv")
@@ -36,8 +40,14 @@ cache_path = Path("data/geocoded_incidents.csv")
 
 @st.cache_data
 def geocode_addresses(df):
-    geolocator = Nominatim(user_agent="richmond_fire_analytics")
-    geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
+    geolocator = Nominatim(
+        user_agent="richmond_fire_analytics"
+    )
+
+    geocode = RateLimiter(
+        geolocator.geocode,
+        min_delay_seconds=1
+    )
 
     rows = []
 
@@ -49,6 +59,7 @@ def geocode_addresses(df):
 
         try:
             location = geocode(address)
+
             if location:
                 rows.append({
                     "Incident Number": row["Incident Number"],
@@ -63,46 +74,140 @@ def geocode_addresses(df):
                     "Latitude": location.latitude,
                     "Longitude": location.longitude,
                 })
+
         except Exception:
             pass
 
     return pd.DataFrame(rows)
 
 
+# ---------- Load Geocoded Map Data ----------
+
 if cache_path.exists():
     map_df = pd.read_csv(cache_path)
+
 else:
-    st.warning("First run may take a minute because addresses need to be geocoded.")
+    st.warning(
+        "First run may take a minute because addresses need to be geocoded."
+    )
+
     map_df = geocode_addresses(incidents_df)
-    map_df.to_csv(cache_path, index=False)
+
+    map_df.to_csv(
+        cache_path,
+        index=False
+    )
+
 
 if map_df.empty:
     st.error("No geocoded incidents found.")
     st.stop()
 
-districts = sorted(map_df["District"].dropna().astype(str).unique())
-shifts = sorted(map_df["Shift"].dropna().astype(str).unique())
 
-selected_districts = st.sidebar.multiselect("District", districts, key="map_districts")
-selected_shifts = st.sidebar.multiselect("Shift", shifts, key="map_shifts")
+# ---------- Filter Options ----------
+
+districts = sorted(
+    map_df["District"]
+    .dropna()
+    .astype(str)
+    .unique()
+)
+
+shifts = sorted(
+    map_df["Shift"]
+    .dropna()
+    .astype(str)
+    .unique()
+)
+
+company_options = sorted(
+    units_df[
+        units_df["Unit"].str.match(
+            r"^(E|T)\d+$",
+            na=False
+        )
+    ]["Unit"]
+    .dropna()
+    .astype(str)
+    .unique()
+)
+
+
+# ---------- Sidebar Filters ----------
+
+selected_districts = st.sidebar.multiselect(
+    "District",
+    districts,
+    key="map_districts"
+)
+
+selected_shifts = st.sidebar.multiselect(
+    "Shift",
+    shifts,
+    key="map_shifts"
+)
+
+selected_companies = st.sidebar.multiselect(
+    "Company",
+    company_options,
+    key="map_companies"
+)
+
+
+# ---------- Apply Filters ----------
 
 filtered_map_df = map_df.copy()
 
-if filtered_map_df.empty:
-    st.info("No incidents match the selected filters.")
-    st.stop()
 
 if selected_districts:
     filtered_map_df = filtered_map_df[
-        filtered_map_df["District"].astype(str).isin(selected_districts)
+        filtered_map_df["District"]
+        .astype(str)
+        .isin(selected_districts)
     ]
+
 
 if selected_shifts:
     filtered_map_df = filtered_map_df[
-        filtered_map_df["Shift"].astype(str).isin(selected_shifts)
+        filtered_map_df["Shift"]
+        .astype(str)
+        .isin(selected_shifts)
     ]
 
-st.metric("Mapped Incidents", len(filtered_map_df))
+
+if selected_companies:
+    matching_incidents = (
+        units_df[
+            units_df["Unit"].isin(selected_companies)
+        ]["Incident Number"]
+        .dropna()
+        .unique()
+    )
+
+    filtered_map_df = filtered_map_df[
+        filtered_map_df["Incident Number"]
+        .isin(matching_incidents)
+    ]
+
+
+# ---------- No Results ----------
+
+if filtered_map_df.empty:
+    st.info(
+        "No incidents match the selected filters."
+    )
+    st.stop()
+
+
+# ---------- Map Summary ----------
+
+st.metric(
+    "Mapped Incidents",
+    len(filtered_map_df)
+)
+
+
+# ---------- Create Map ----------
 
 m = folium.Map(
     location=[37.5407, -77.4360],
@@ -110,8 +215,12 @@ m = folium.Map(
     tiles="CartoDB dark_matter"
 )
 
+
 marker_cluster = MarkerCluster().add_to(m)
+
+
 for _, row in filtered_map_df.iterrows():
+
     popup_html = f"""
     <b>{row.get("Incident Number", "")}</b><br>
     <b>Address:</b> {row.get("Address", "")}<br>
@@ -123,13 +232,26 @@ for _, row in filtered_map_df.iterrows():
     """
 
     folium.CircleMarker(
-        location=[row["Latitude"], row["Longitude"]],
+        location=[
+            row["Latitude"],
+            row["Longitude"]
+        ],
         radius=6,
-        popup=folium.Popup(popup_html, max_width=350),
+        popup=folium.Popup(
+            popup_html,
+            max_width=350
+        ),
         color="#ef233c",
         fill=True,
         fill_color="#ef233c",
         fill_opacity=0.8,
     ).add_to(marker_cluster)
 
-st_folium(m, width=None, height=700)
+
+# ---------- Display Map ----------
+
+st_folium(
+    m,
+    width=None,
+    height=700
+)
