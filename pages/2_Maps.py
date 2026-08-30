@@ -212,8 +212,15 @@ st.metric(
 m = folium.Map(
     location=[37.5407, -77.4360],
     zoom_start=12,
-    tiles="CartoDB dark_matter"
+    tiles=None
 )
+
+folium.TileLayer(
+    tiles="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
+    attr="© Stadia Maps © OpenMapTiles © OpenStreetMap contributors",
+    name="Dark Map",
+    max_zoom=20
+).add_to(m)
 
 
 marker_cluster = MarkerCluster().add_to(m)
