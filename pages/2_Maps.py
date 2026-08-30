@@ -3,7 +3,7 @@ import streamlit as st
 import folium
 
 from pathlib import Path
-from streamlit_folium import st_folium
+from streamlit_folium import folium_static
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
 from folium.plugins import MarkerCluster
@@ -257,8 +257,8 @@ for _, row in filtered_map_df.iterrows():
 
 # ---------- Display Map ----------
 
-st_folium(
+folium_static(
     m,
-    width=None,
+    width=1400,
     height=700
 )
