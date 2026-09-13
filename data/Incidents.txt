@@ -1,8 +1,25 @@
 {
     "pageNumber": 0,
     "pageSize": 100,
-    "totalCount": 123,
+    "totalCount": 124,
     "incidents": [
+        {
+            "incidentId": 9651102,
+            "incidentNumber": "F02609120097",
+            "incidentOnsetDateTime": "2026-09-12T18:13:55-04:00",
+            "incidentStatusTypeId": 1,
+            "streetAddress": "6203 LAMAR Drive",
+            "types": "Structural involvement",
+            "validationIssuesCount": 8,
+            "shift": "A Shift",
+            "district": "23",
+            "units": "E22, BC3, SAFETY1, T9, T8, E24, E23, E25, E20, CE9, BC2, BC4, AL1",
+            "attachmentCount": 0,
+            "hasImportUpdatesAvailable": true,
+            "cadLatestSubmission": "2026-09-12T23:03:05.3858238+00:00",
+            "pcrs": [],
+            "pendingAutoLock": false
+        },
         {
             "incidentId": 9254955,
             "incidentNumber": "F02609010034",
