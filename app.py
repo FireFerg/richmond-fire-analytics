@@ -13,7 +13,7 @@ from utils.data_loader import load_incidents
 
 
 st.set_page_config(
-    page_title="RVA Fire Data",
+    page_title="RVA Fire Data | Richmond Fire Incident Analytics",
     page_icon=str(FAVICON),
     layout="wide",
     initial_sidebar_state="expanded"
@@ -41,7 +41,12 @@ st.sidebar.image(
     use_container_width=True
 )
 
-
+# Search-engine-friendly site description
+st.header("RVA Fire Data")
+st.text(
+    "Richmond, Virginia fire incident data and analytics, including "
+    "incident trends, company activity, districts, maps, and response statistics."
+)
 
 def apply_filters(
     df,
