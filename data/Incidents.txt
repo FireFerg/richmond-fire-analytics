@@ -1,8 +1,62 @@
 {
     "pageNumber": 0,
     "pageSize": 100,
-    "totalCount": 126,
+    "totalCount": 128,
     "incidents": [
+        {
+            "incidentId": 9952025,
+            "incidentNumber": "F02609210088",
+            "nerisIncidentNumber": "F02609210088_639256369684430319",
+            "incidentOnsetDateTime": "2026-09-21T16:16:39-04:00",
+            "incidentStatusTypeId": 3,
+            "streetAddress": "3605 BROOK Road",
+            "types": "Structural involvement",
+            "validationIssuesCount": 0,
+            "battalion": "02",
+            "division": "02",
+            "station": "Station 16",
+            "shift": "C Shift",
+            "district": "16",
+            "units": "E19, BC1, SAFETY1, T6, T3, E5, E16, E15, E14, BC2, E10, AL1",
+            "reportWriter": "WILLIAMS, TERRENCE I | 20450",
+            "incidentSubmissionStatusTypeId": 3,
+            "incidentLastSubmittedDate": "2026-09-22T01:22:49.0298+00:00",
+            "attachmentCount": 0,
+            "hasImportUpdatesAvailable": true,
+            "cadLatestSubmission": "2026-09-21T21:18:57.7347497+00:00",
+            "pcrs": [],
+            "pendingAutoLock": false
+        },
+        {
+            "incidentId": 9767121,
+            "incidentNumber": "F02609160028",
+            "nerisIncidentNumber": "F02609160028_639252343225055470",
+            "incidentOnsetDateTime": "2026-09-16T08:08:01-04:00",
+            "incidentStatusTypeId": 3,
+            "streetAddress": "1710 E FRANKLIN Street",
+            "types": "Carbon monoxide / other inhalation injury",
+            "validationIssuesCount": 0,
+            "battalion": "01",
+            "shift": "B Shift",
+            "district": "1",
+            "zone": "In District",
+            "units": "T2, E11, SAFETY1, BC1, BC3, H2, E6, H1, E22, E5, FM4, AL1",
+            "reportWriter": "BAUST, JESSE J | 144740",
+            "incidentSubmissionStatusTypeId": 3,
+            "incidentLastSubmittedDate": "2026-09-17T09:32:03.167989+00:00",
+            "attachmentCount": 0,
+            "hasImportUpdatesAvailable": true,
+            "cadLatestSubmission": "2026-09-16T15:48:30.5631725+00:00",
+            "pcrs": [
+                {
+                    "pcrId": "a68efa5c-b516-4f5a-82ab-b4c7006cd4d6",
+                    "unitName": "E6",
+                    "unitId": "3242033d-9a3a-ed11-813d-000d3a0064aa",
+                    "lastUpdated": "2026-09-16T09:44:52-04:00"
+                }
+            ],
+            "pendingAutoLock": false
+        },
         {
             "incidentId": 9740157,
             "incidentNumber": "F02609150062",
