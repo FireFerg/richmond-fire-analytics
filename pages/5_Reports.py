@@ -146,7 +146,11 @@ stations = {
 }
 
 st.subheader("Recommended launch-site geography")
-map_obj = folium.Map(location=[37.525, -77.455], zoom_start=12, tiles="CartoDB positron")
+map_obj = folium.Map(
+    location=[37.525, -77.455],
+    zoom_start=12,
+    tiles="OpenStreetMap",
+)
 for station_id, station in stations.items():
     active = station_id in selected
     folium.CircleMarker(
