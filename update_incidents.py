@@ -72,6 +72,16 @@ def get_incident_type(incident):
 
     return ""
 
+def should_exclude_incident(incident):
+    incident_type = get_incident_type(incident).lower()
+
+    excluded_terms = (
+        "hazardous material",
+        "inhalation injury",
+    )
+
+    return any(term in incident_type for term in excluded_terms)
+
 
 def get_units(incident):
     for field in ("units", "unit"):
@@ -331,11 +341,16 @@ def main():
 
     new_unique_incidents = []
     duplicate_count = 0
+    excluded_count = 0
 
     for incident in new_incidents:
         incident_number = incident.get("incidentNumber")
 
         if not incident_number:
+            continue
+
+        if should_exclude_incident(incident):
+            excluded_count += 1
             continue
 
         if incident_number in existing_numbers:
@@ -349,6 +364,7 @@ def main():
     print(f"Master incidents:     {len(master_incidents)}")
     print(f"New export incidents: {len(new_incidents)}")
     print(f"Already existed:      {duplicate_count}")
+    print(f"Excluded incidents:   {excluded_count}")
     print(f"New incidents:        {len(new_unique_incidents)}")
     print(
         f"Total after merge:    "
