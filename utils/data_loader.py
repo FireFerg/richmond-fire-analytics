@@ -135,22 +135,22 @@ def load_incidents(file):
 
     if not incidents_df.empty:
         incidents_df["Date/Time"] = pd.to_datetime(
-            incidents_df["Date/Time"],
-            errors="coerce"
-        )
-        incidents_df["Date"] = pd.to_datetime(
-            incidents_df["Date"],
-            errors="coerce"
-        )
+        incidents_df["Date/Time"],
+        format="mixed",
+        errors="coerce",
+        utc=True
+    ).dt.tz_convert("America/New_York")
+
+    incidents_df["Date"] = incidents_df["Date/Time"].dt.tz_localize(None).dt.normalize()
 
     if not units_df.empty:
         units_df["Date/Time"] = pd.to_datetime(
-            units_df["Date/Time"],
-            errors="coerce"
-        )
-        units_df["Date"] = pd.to_datetime(
-            units_df["Date"],
-            errors="coerce"
-        )
+        units_df["Date/Time"],
+        format="mixed",
+        errors="coerce",
+        utc=True
+    ).dt.tz_convert("America/New_York")
+
+    units_df["Date"] = units_df["Date/Time"].dt.tz_localize(None).dt.normalize()
 
     return incidents_df, units_df
